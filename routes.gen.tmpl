@@ -12,7 +12,7 @@ import (
 {{ `type (` }}
 {{ `  route struct {` }}
 {{ `    Verb    string`   }}
-{{ `    Handler any`		}}
+{{ `    Handler ` }}  {{- .RouteHandlerType }}
 {{ `  }` }}
 {{ `  routes   []route` }}
 {{ `  routeMap map[string]routes` }}
