@@ -37,6 +37,24 @@ Any file present within the **routes** directory that doesn't match the above po
 
 After traversing through the [main directory](#main-directory) and skipping files that doesn't follow convention, a `main.gen.go` file is automatically generated that contains all the route definitions along with their handler and verb.
 
+### [Usage](#usage)
+
+```sh
+Usage of nami:
+  -mdp string
+        stands for Main Directory Path
+        states the main directory path of routes directory (default "./routes")
+  -rht string
+        stands for Route Handler Type
+        states the type of the route handler function (default "http.HandlerFunc")
+  -rhti string
+        stands for Route Handler Type Import
+        states the import path of the route handler function (default "net/http")
+  -rt string
+        stands for Router Type
+        states the type of the router struct pointer (default "*http.ServeMux")
+```
+
 > TODO:
 >
 > Figure out how to use `go generate` to generate prebuild route mappings and also perhaps do some stuff to integrate the generate route mappings with a web framework.
