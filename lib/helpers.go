@@ -1,4 +1,4 @@
-package internal
+package lib
 
 import (
 	"os/exec"
@@ -64,6 +64,5 @@ func autoFormatFile(filepath string) error {
 	if err := fmtCmd.Run(); err != nil {
 		return err
 	}
-
 	return nil
 }
