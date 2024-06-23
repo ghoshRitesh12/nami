@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/ghoshRitesh12/nami"
+	"github.com/ghoshRitesh12/nami/internal"
 )
 
 func main() {
-	nami := nami.NewRouteGenerator()
-	nami.GenerateRoutes()
+	tg := internal.GetTemplateGenerator()
+	tg.GenerateRoutes()
+
+	// nami := nami.NewRouteGenerator()
 }
