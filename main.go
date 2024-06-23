@@ -1,19 +1,22 @@
-package nami
+package main
 
 import (
-	"github.com/ghoshRitesh12/nami/internal"
+	"fmt"
+
+	"github.com/ghoshRitesh12/nami/lib"
 )
 
-// only hosts route generator config
-type RouteGenerator struct {
-	RouteHandlerType string
-	mainDirPath      string
-	// routeHandlerPkgName string
-}
+func main() {
+	flags := lib.GetParsedFlags()
+	routeGenerator := lib.GetRouteGenerator()
 
-func NewRouteGenerator() *RouteGenerator {
-	return &RouteGenerator{
-		mainDirPath:      "./" + internal.MAIN_DIR_NAME,
-		RouteHandlerType: "any",
-	}
+	routeGenerator.
+		AddMainDirPath(flags.MainDirPath).
+		AddRouteHandlerInfo(
+			flags.RouteHandlerTypeImport,
+			flags.RouteHandlerType,
+		)
+		// GenerateRoutes()
+
+	fmt.Printf("%+v\n", flags)
 }
