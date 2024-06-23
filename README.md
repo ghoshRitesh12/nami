@@ -42,3 +42,5 @@ After traversing through the [main directory](#main-directory) and skipping file
 > Figure out how to use `go generate` to generate prebuild route mappings and also perhaps do some stuff to integrate the generate route mappings with a web framework.
 >
 > This should be fun
+
+THIS SHOULDN'T BE A PACKAGE, IT SHOULD BE A PROGRAM THAT DOES STUFF
