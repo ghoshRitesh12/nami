@@ -1,4 +1,4 @@
-package nami
+package internal
 
 import (
 	"go/ast"
@@ -59,14 +59,16 @@ func getRouteHandler(path string) (string, error) {
 
 type PathParams string
 
-func (pp *PathParams) GetPath() string {
-	switch string(*pp) {
-	case "/index":
-		return "/"
-	default:
-		return string(*pp)
-	}
-}
+// will use this method later if necessary
+// func (pp *PathParams) GetPath() string {
+// 	if strings.HasPrefix(pp.String(), "/index") {
+// 		_, v, _ := strings.Cut(pp.String(), "/index")
+// 		fmt.Println(pp.String(), v)
+// 		// return pp.String()[firstOccurence:]
+// 	}
+
+// 	return pp.String()
+// }
 
 func (pp *PathParams) String() string {
 	return string(*pp)

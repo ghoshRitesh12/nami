@@ -1,4 +1,4 @@
-package nami
+package internal
 
 import (
 	"os/exec"
@@ -17,7 +17,7 @@ func getGoModuleName() (string, error) {
 	return string(outputInBytes), nil
 }
 
-func getEndpoint(path string) (PathParams, error) {
+func getPathParams(path string) (PathParams, error) {
 	separator := string(filepath.Separator)
 	firstOccurence := strings.Index(path, separator)
 	lastOccurence := strings.LastIndex(path, separator)
@@ -57,4 +57,13 @@ func isValidFile(filename string) bool {
 func isValidRouteHandlerFileName(functionName string) bool {
 	_, ok := POSSIBLE_ROUTE_HANDLER_NAMES[functionName]
 	return ok
+}
+
+func autoFormatFile(filepath string) error {
+	fmtCmd := exec.Command("go", "fmt", filepath)
+	if err := fmtCmd.Run(); err != nil {
+		return err
+	}
+
+	return nil
 }

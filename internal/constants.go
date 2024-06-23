@@ -1,4 +1,4 @@
-package nami
+package internal
 
 import (
 	"errors"
@@ -7,12 +7,12 @@ import (
 
 const (
 	MAIN_DIR_NAME = "routes"
-	MAIN_DIR_PATH = "./" + MAIN_DIR_NAME
 )
 
 const (
-	TMPL_FILENAME   = "routes.gen.tmpl"
-	OUTPUT_FILENAME = "main.gen.go"
+	ROUTES_TMPL_FILE string = "routes.gen.tmpl"
+	OUTPUT_FILENAME  string = "routes.gen.go"
+	MAIN_TMPL_FILE   string = "main.gen.go"
 )
 
 var (
