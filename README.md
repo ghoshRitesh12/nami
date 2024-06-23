@@ -39,7 +39,7 @@ After traversing through the [main directory](#main-directory) and skipping file
 
 ### [Usage](#usage)
 
-```sh
+```
 Usage of nami:
   -mdp string
         stands for Main Directory Path
