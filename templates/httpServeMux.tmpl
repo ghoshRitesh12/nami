@@ -1,0 +1,19 @@
+{{ define "httpServeMux" -}}
+{{ $routeMap := . -}}
+
+router := http.NewServeMux()
+
+{{ range $path, $routes := $routeMap }}
+
+  {{ range $k, $route := $routes }} 
+    {{- `router.HandleFunc(` -}}
+    {{ `"` }} {{- $route.Verb }} {{ $path -}} {{ `",` -}}
+    {{ $route.Handler -}}
+    {{ `)` }}
+  {{ end -}} 
+
+{{ end }}
+
+return router
+
+{{- end }}
