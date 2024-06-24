@@ -26,6 +26,10 @@ func getPathParams(path string) (PathParams, error) {
 		return "", ErrSeparatorMissing
 	}
 
+	if firstOccurence == lastOccurence {
+		return PathParams("/"), nil
+	}
+
 	return PathParams(path[firstOccurence:lastOccurence]), nil
 }
 
@@ -33,15 +37,21 @@ func getHTTPVerb(filename string) string {
 	const DELIMETER string = "."
 	splitText := strings.Split(filename, DELIMETER)
 
-	return splitText[1]
+	return strings.ToUpper(splitText[1])
 }
 
 func getPackagePath(moduleName, path string) string {
-	return strings.ReplaceAll(
+	pkgPath := strings.ReplaceAll(
 		filepath.Join(moduleName, MAIN_DIR_NAME, filepath.Clean(path)),
 		"\n",
 		"",
 	)
+
+	if filepath.Base(pkgPath) == MAIN_DIR_NAME {
+		pkgPath = ""
+	}
+
+	return pkgPath
 }
 
 func getPackageName(endpoint string) string {
