@@ -114,6 +114,8 @@ func (rg *RouteGenerator) generateRoutesFile() error {
 		return err
 	}
 
+	defer fmt.Println(cwd)
+
 	outputFilePath := filepath.Join(cwd, rg.Config.mainDirPath, MAIN_OUTPUT_FILE)
 	outputFile, err := os.Create(outputFilePath)
 	if err != nil {
