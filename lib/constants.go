@@ -17,7 +17,7 @@ const (
 	HTTP_SERVE_MUX_TMPL_NAME string = "main"
 )
 
-const TEMPLATE_GLOB_PATTERN string = "./templates/*.tmpl"
+const TEMPLATE_GLOB_PATTERN string = "*.tmpl"
 
 const (
 	FlagRouteHandlerType        string = "rht"
