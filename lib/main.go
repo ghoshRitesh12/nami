@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/ghoshRitesh12/nami/templates"
 )
 
 type (
@@ -114,8 +116,6 @@ func (rg *RouteGenerator) generateRoutesFile() error {
 		return err
 	}
 
-	defer fmt.Println(cwd)
-
 	outputFilePath := filepath.Join(cwd, rg.Config.mainDirPath, MAIN_OUTPUT_FILE)
 	outputFile, err := os.Create(outputFilePath)
 	if err != nil {
@@ -123,7 +123,7 @@ func (rg *RouteGenerator) generateRoutesFile() error {
 	}
 	defer outputFile.Close()
 
-	tmpl, err := template.ParseGlob(TEMPLATE_GLOB_PATTERN)
+	tmpl, err := template.ParseFS(templates.TemplateFS, "*.tmpl")
 	if err != nil {
 		return err
 	}
