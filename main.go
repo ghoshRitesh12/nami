@@ -1,22 +1,23 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/ghoshRitesh12/nami/lib"
 )
 
 func main() {
 	flags := lib.GetParsedFlags()
-	routeGenerator := lib.GetRouteGenerator()
+	routeGenerator := lib.NewRouteGenerator()
+
+	// fmt.Printf("%+v\n", flags)
 
 	routeGenerator.
 		AddMainDirPath(flags.MainDirPath).
 		AddRouteHandlerInfo(
 			flags.RouteHandlerTypeImport,
 			flags.RouteHandlerType,
-		)
-		// GenerateRoutes()
-
-	fmt.Printf("%+v\n", flags)
+		).
+		AddRouterStructPointerType(
+			flags.RouterStructPointerType,
+		).
+		GenerateRoutes()
 }
