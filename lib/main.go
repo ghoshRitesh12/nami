@@ -12,9 +12,9 @@ import (
 
 type (
 	config struct {
-		RouteHandlerType      string
-		RouteHandlerPkgImport string
-		RouterObjType         string
+		RouteHandlerType        string
+		RouteHandlerPkgImport   string
+		RouterStructPointerType string
 
 		mainDirPath string
 	}
@@ -26,23 +26,17 @@ type (
 	}
 )
 
-var ROUTE_GENERATOR = RouteGenerator{
-	Config: config{
-		RouteHandlerType: "any",
-		mainDirPath:      "./" + MAIN_DIR_NAME,
-	},
-	Packages: make(packages),
-	RouteMap: make(routeMap),
-}
-
-func GetRouteGenerator() *RouteGenerator {
-	return &ROUTE_GENERATOR
+func NewRouteGenerator() *RouteGenerator {
+	return &RouteGenerator{
+		Packages: make(packages),
+		RouteMap: make(routeMap),
+	}
 }
 
 func (rg *RouteGenerator) GenerateRoutes() {
 	if err := rg.traverseAndParse(); err != nil {
 		log.Fatalf(
-			"error occured while traversing and parsing %s directory\n error -> %v",
+			"error occured while traversing and parsing %s directory\n"+"error -> %v",
 			MAIN_DIR_NAME,
 			err,
 		)
@@ -50,7 +44,7 @@ func (rg *RouteGenerator) GenerateRoutes() {
 
 	if err := rg.generateRoutesFile(); err != nil {
 		log.Fatalf(
-			"error occured while generating routes for %s directory\n error -> %v",
+			"error occured while generating routes for %s directory\n"+"error -> %v",
 			MAIN_DIR_NAME,
 			err,
 		)
@@ -66,6 +60,8 @@ func (rg *RouteGenerator) traverseAndParse() error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Printf("Parsing file based routes\n\n")
 
 	walkErr := filepath.WalkDir(rg.Config.mainDirPath, func(path string, file fs.DirEntry, e error) error {
 		if file.IsDir() {
@@ -87,19 +83,18 @@ func (rg *RouteGenerator) traverseAndParse() error {
 			return nil
 		}
 
-		fmt.Println("PATH ->", path)
-		fmt.Println("PATH PARAMS ->", pathParams)
-		fmt.Println("handler ->", routeHandler)
-		fmt.Println("")
+		verb := getHTTPVerb(filename)
 
 		rg.RouteMap.add(
 			pathParams.String(),
-			getHTTPVerb(filename),
+			verb,
 			getPackageName(pathParams.String()),
 			routeHandler,
 		)
 
 		rg.Packages.add(getPackagePath(moduleName, pathParams.String()))
+
+		fmt.Println("├ ƒ", verb, pathParams.String())
 
 		return nil
 	})
@@ -107,6 +102,8 @@ func (rg *RouteGenerator) traverseAndParse() error {
 	if walkErr != nil {
 		return err
 	}
+
+	fmt.Println()
 
 	return nil
 }
@@ -117,22 +114,27 @@ func (rg *RouteGenerator) generateRoutesFile() error {
 		return err
 	}
 
-	outputFilePath := filepath.Join(cwd, rg.Config.mainDirPath, ROUTES_OUTPUT_FILE)
+	outputFilePath := filepath.Join(cwd, rg.Config.mainDirPath, MAIN_OUTPUT_FILE)
 	outputFile, err := os.Create(outputFilePath)
 	if err != nil {
 		return err
 	}
 	defer outputFile.Close()
 
-	tmpl, err := template.New(ROUTES_TMPL_FILE).ParseFiles(ROUTES_TMPL_FILE)
+	tmpl, err := template.ParseGlob(TEMPLATE_GLOB_PATTERN)
 	if err != nil {
 		return err
 	}
-	if err := tmpl.Execute(outputFile, rg); err != nil {
+	if err := tmpl.ExecuteTemplate(outputFile, MAIN_TMPL_NAME, rg); err != nil {
 		return err
 	}
 
-	return autoFormatFile(outputFilePath)
+	if fmtErr := autoFormatFile(outputFilePath); fmtErr != nil {
+		return fmtErr
+	}
+
+	fmt.Printf("Generated route file `%s` in `%s` directory \n\n", MAIN_OUTPUT_FILE, rg.Config.mainDirPath)
+	return nil
 }
 
 // finds the "routes" dir, if not present returns an error
@@ -146,15 +148,33 @@ func (rg *RouteGenerator) findMainDir() error {
 }
 
 func (rg *RouteGenerator) AddRouteHandlerInfo(routeHandlerTypeImport, routeHandlerType string) *RouteGenerator {
-	const dot = "."
-	firstSeparatorOccurence := strings.Index(routeHandlerType, dot)
+	firstSeparatorOccurence := strings.Index(routeHandlerType, ".")
 
 	if filepath.Base(routeHandlerTypeImport) != routeHandlerType[:firstSeparatorOccurence] {
 		log.Fatalln(ErrInvalidRouteHandlerTypeOrImport)
 	}
 
 	rg.Packages.add(routeHandlerTypeImport)
+	rg.Config.RouteHandlerPkgImport = routeHandlerTypeImport
 	rg.Config.RouteHandlerType = routeHandlerType
+	return rg
+}
+
+func (rg *RouteGenerator) AddRouterStructPointerType(structPointerType string) *RouteGenerator {
+	pointerTypePkg := structPointerType
+
+	if structPointerType[:1] != "*" {
+		log.Fatalln(ErrInvalidRouterType)
+	}
+
+	pointerStrippedType := structPointerType[1:]
+	pointerTypePkg = pointerStrippedType[:strings.Index(pointerStrippedType, ".")]
+
+	if filepath.Base(rg.Config.RouteHandlerPkgImport) != pointerTypePkg {
+		log.Fatalln(ErrInvalidRouterType)
+	}
+
+	rg.Config.RouterStructPointerType = structPointerType
 	return rg
 }
 
