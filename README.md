@@ -50,8 +50,8 @@ Usage of nami:
   -rhti string
         stands for Route Handler Type Import
         states the import path of the route handler function (default "net/http")
-  -rt string
-        stands for Router Type
+  -rspt string
+        stands for Router Struct Pointer Type
         states the type of the router struct pointer (default "*http.ServeMux")
 ```
 
