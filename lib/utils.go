@@ -4,12 +4,17 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"path/filepath"
 )
 
-type packages map[string]bool
+type packages map[string]string
 
 func (pkgs *packages) add(pkgPath string) {
-	(*pkgs)[pkgPath] = true
+	if pkgPath == "" {
+		return
+	}
+	alias := filepath.Base(pkgPath)
+	(*pkgs)[pkgPath] = alias
 }
 
 type (
@@ -22,9 +27,15 @@ type (
 )
 
 func (rmap *routeMap) add(pathName, httpVerb, pkgName, routeHandlerName string) {
+	handlerName := pkgName + "." + routeHandlerName
+
+	if pkgName == "" {
+		handlerName = routeHandlerName
+	}
+
 	((*rmap)[pathName]) = append(((*rmap)[pathName]), route{
 		Verb:    httpVerb,
-		Handler: pkgName + "." + routeHandlerName,
+		Handler: handlerName,
 	})
 }
 
@@ -43,6 +54,8 @@ func getRouteHandler(path string) (string, error) {
 		if !ok {
 			continue
 		}
+
+		// fmt.Printf("params: %v\n", fn)
 
 		if isValidRouteHandlerFileName(fn.Name.Name) {
 			routeHandlerName = fn.Name.Name
