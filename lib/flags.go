@@ -3,13 +3,14 @@ package lib
 import (
 	"flag"
 	"log"
+	"net/http"
 )
 
 type RouteGeneratorFlags struct {
-	RouteHandlerType       string // rht
-	RouteHandlerTypeImport string // rhti
-	RouterType             string // rt
-	MainDirPath            string // mdp
+	RouteHandlerType        string // rht
+	RouteHandlerTypeImport  string // rhti
+	RouterStructPointerType string // rspt
+	MainDirPath             string // mdp
 }
 
 func GetParsedFlags() RouteGeneratorFlags {
@@ -32,11 +33,12 @@ func GetParsedFlags() RouteGeneratorFlags {
 	)
 
 	flag.StringVar(
-		&flags.RouterType,
-		FlagRouterType,
-		"http",
-		"stands for Router Type"+"\n"+
-			"states the type of the router struct",
+		&flags.RouterStructPointerType,
+		FlagRouterStructPointerType,
+		// "http",
+		"*http.ServeMux",
+		"stands for Router Struct Pointer Type"+"\n"+
+			"states the type of the router struct pointer",
 	)
 
 	flag.StringVar(
@@ -54,4 +56,8 @@ func GetParsedFlags() RouteGeneratorFlags {
 	}
 
 	return flags
+}
+
+func RegisterRoutes(router *http.ServeMux) {
+
 }
