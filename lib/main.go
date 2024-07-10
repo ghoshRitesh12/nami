@@ -123,7 +123,8 @@ func (rg *RouteGenerator) generateRoutesFile() error {
 	}
 	defer outputFile.Close()
 
-	tmpl, err := template.ParseFS(templates.TemplateFS, TEMPLATE_GLOB_PATTERN)
+	templateFS := templates.GetTemplateFS()
+	tmpl, err := template.ParseFS(templateFS, TEMPLATE_GLOB_PATTERN)
 	if err != nil {
 		return err
 	}
